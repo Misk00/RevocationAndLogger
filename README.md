@@ -24,15 +24,15 @@
 
 ## 配置说明
 
-```json
+```
 {
     "receiver": {
         "type": "wxid",  //类型，目前仅支持wxid，格式类似这样 wxid_xxxxxxxxxxxxxx
-        "name": "wxid_xxxxxxxxxxxxxx" #撤回信息的提示的收信人的wxid
+        "name": "wxid_xxxxxxxxxxxxxx" //撤回信息的提示的收信人的wxid
     },
-    "message_expire_time": 120, #消息缓存时间，此处为缓存到内存的时间，群聊记录保存在txt文件里长久缓存
+    "message_expire_time": 120, //消息缓存时间，此处为缓存到内存的时间，群聊记录保存在txt文件里长久缓存
     "cleanup_interval": 2, //清理间隔
-    "chat_log_dir": "chat_logs",#群聊信息缓存目录，dify-on-wechat/chat_logs#
+    "chat_log_dir": "chat_logs",//群聊信息缓存目录，dify-on-wechat/chat_logs
      "last_spoken_command": "最后发言时间" //群聊中触发词
 } 
 ```

@@ -1,0 +1,10 @@
+{
+    "receiver": {
+        "type": "wxid",  
+        "name": "" //你的微信wxid
+    },
+    "message_expire_time": 120,
+    "cleanup_interval": 2,
+    "chat_log_dir": "chat_logs",// 文件缓存目录
+     "last_spoken_command": "最后发言时间"
+} 

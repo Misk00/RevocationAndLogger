@@ -3,6 +3,7 @@
 ## 功能演示
 ![1](https://raw.githubusercontent.com/Misk00/RevocationAndLogger/refs/heads/main/image/1.png)
 ![2](https://raw.githubusercontent.com/Misk00/RevocationAndLogger/refs/heads/main/image/2.png)
+![4](https://raw.githubusercontent.com/Misk00/RevocationAndLogger/refs/heads/main/image/4.png)
 ![3](https://raw.githubusercontent.com/Misk00/RevocationAndLogger/refs/heads/main/image/3.png)
 
 

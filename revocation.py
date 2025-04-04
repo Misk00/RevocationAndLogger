@@ -34,7 +34,7 @@ except ImportError:
     namecn="防撤回与群聊记录",
     desc="防撤回、群聊记录txt、群成员最后发言时间记录与查询(发送'最后信息'以文本形式)", # Updated description
     version="1.0", # Incremented version
-    author="sineom & Gemini",
+    author="Misk",
 )
 class RevocationAndLogger(Plugin):
     def __init__(self):

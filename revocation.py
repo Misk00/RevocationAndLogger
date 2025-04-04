@@ -29,7 +29,7 @@ except ImportError:
     desire_priority=100,
     hidden=False,
     namecn="防撤回与群聊记录",
-    desc="防撤回(修复群聊通知v2.1)、群聊记录txt、最后发言查询(文本)",
+    desc="防撤回(修复群聊通知v1.0)、群聊记录txt、最后发言查询(文本)",
     version="1.0", # Incremented version for command fix and hint optimize
     author="Misk00",
 )
@@ -43,7 +43,7 @@ class RevocationAndLogger(Plugin):
         self.handlers[Event.ON_RECEIVE_MESSAGE] = self.on_receive_message
         self.handlers[Event.ON_HANDLE_CONTEXT] = self.on_handle_context
 
-        logger.info("[RevocationAndLogger] 插件初始化 (V2.1.1 - 修复命令回复及提示优化)")
+        logger.info("[RevocationAndLogger] 插件初始化 (V1.0 - 修复命令回复及提示优化)")
 
         self.msg_dict = {}
         self.target_friend = None
@@ -316,7 +316,7 @@ class RevocationAndLogger(Plugin):
         except Exception as e: logger.error(f"[RevocationAndLogger] 获取用户信息 API 调用失败 for {user_id}: {e}"); return user_id
 
     def handle_revoke(self, msg: ChatMessage, is_group=False):
-        logger.info(f"[RevocationAndLogger V2.1] Processing revoke message (Group: {is_group})...")
+        logger.info(f"[RevocationAndLogger V1.0] Processing revoke message (Group: {is_group})...")
         revoke_xml_content = msg.content if isinstance(msg.content, str) else ""
 
         revoked_msg_id_attr = str(getattr(msg, 'revoked_msg_id', ''))
@@ -336,13 +336,13 @@ class RevocationAndLogger(Plugin):
             if msgid_xml and msgid_xml not in possible_ids: possible_ids.append(msgid_xml)
 
         except Exception as e:
-            logger.error(f"[RevocationAndLogger V2.1] Error parsing revoke message IDs from XML: {e}")
+            logger.error(f"[RevocationAndLogger V1.0] Error parsing revoke message IDs from XML: {e}")
 
         if not possible_ids:
-            logger.error("[RevocationAndLogger V2.1] Failed to extract any potential revoked message ID.")
+            logger.error("[RevocationAndLogger V1.0] Failed to extract any potential revoked message ID.")
             return
 
-        logger.info(f"[RevocationAndLogger V2.1] Possible revoked IDs: {possible_ids}. Cache keys: {list(self.msg_dict.keys())}")
+        logger.info(f"[RevocationAndLogger V1.0] Possible revoked IDs: {possible_ids}. Cache keys: {list(self.msg_dict.keys())}")
 
         found_msg_info = None
         found_id = None
@@ -350,28 +350,28 @@ class RevocationAndLogger(Plugin):
             if try_id in self.msg_dict:
                 found_msg_info = self.msg_dict[try_id]
                 found_id = try_id
-                logger.info(f"[RevocationAndLogger V2.1] Found original message in cache using ID: {found_id}")
+                logger.info(f"[RevocationAndLogger V1.0] Found original message in cache using ID: {found_id}")
                 break
 
         if not found_msg_info:
-            logger.warning(f"[RevocationAndLogger V2.1] Original message not found in cache for IDs: {possible_ids}")
+            logger.warning(f"[RevocationAndLogger V1.0] Original message not found in cache for IDs: {possible_ids}")
             return
 
         original_msg, tmp_file_path = found_msg_info if isinstance(found_msg_info, tuple) else (found_msg_info, None)
         target = self.get_revoke_msg_receiver()
         if not target:
-            logger.error("[RevocationAndLogger V2.1] Cannot get revoke message receiver config.")
+            logger.error("[RevocationAndLogger V1.0] Cannot get revoke message receiver config.")
             return
 
         try:
             if not self.gewechat_channel or not self.gewechat_channel.client:
-                logger.error("[RevocationAndLogger V2.1] gewechat client not initialized.")
+                logger.error("[RevocationAndLogger V1.0] gewechat client not initialized.")
                 return
             client = self.gewechat_channel.client
             app_id = self.gewechat_channel.app_id
             receiver = target.get('UserName')
             if not client or not app_id or not receiver:
-                logger.error("[RevocationAndLogger V2.1] gewechat client, app_id or receiver is invalid.")
+                logger.error("[RevocationAndLogger V1.0] gewechat client, app_id or receiver is invalid.")
                 return
 
             prefix = ""
@@ -386,30 +386,30 @@ class RevocationAndLogger(Plugin):
                 if hasattr(original_msg, 'actual_user_nickname') and original_msg.actual_user_nickname:
                     actual_name = original_msg.actual_user_nickname
                     revoker_id = getattr(original_msg, 'actual_user_id', None)
-                    logger.info(f"[RevocationAndLogger V2.1] Got revoker from original_msg: {actual_name} (ID: {revoker_id})")
+                    logger.info(f"[RevocationAndLogger V1.0] Got revoker from original_msg: {actual_name} (ID: {revoker_id})")
                 elif hasattr(original_msg, 'actual_user_id') and original_msg.actual_user_id:
                     revoker_id = original_msg.actual_user_id
-                    logger.info(f"[RevocationAndLogger V2.1] Got revoker ID from original_msg: {revoker_id}, looking up name...")
+                    logger.info(f"[RevocationAndLogger V1.0] Got revoker ID from original_msg: {revoker_id}, looking up name...")
                     actual_name_lookup = self.get_user_info(revoker_id)
                     if actual_name_lookup != revoker_id:
                         actual_name = actual_name_lookup
-                        logger.info(f"[RevocationAndLogger V2.1] Looked up revoker name: {actual_name}")
+                        logger.info(f"[RevocationAndLogger V1.0] Looked up revoker name: {actual_name}")
                     else:
-                        logger.warning(f"[RevocationAndLogger V2.1] Lookup for {revoker_id} failed, name unknown.")
+                        logger.warning(f"[RevocationAndLogger V1.0] Lookup for {revoker_id} failed, name unknown.")
                         actual_name = "未知成员"
 
                 if (actual_name == "未知成员" or not actual_name) and revoke_xml_content:
-                    logger.info("[RevocationAndLogger V2.1] Trying fallback: Parsing nickname from revoke XML <replacemsg>...")
+                    logger.info("[RevocationAndLogger V1.0] Trying fallback: Parsing nickname from revoke XML <replacemsg>...")
                     try:
                         replacemsg_match = re.search(r'<!\[CDATA\["([^"]+)"\s+撤回了一条消息\]\]>', revoke_xml_content, re.IGNORECASE)
                         if replacemsg_match:
                             parsed_name = replacemsg_match.group(1)
                             actual_name = parsed_name
-                            logger.info(f"[RevocationAndLogger V2.1] Parsed nickname from <replacemsg>: {actual_name}")
+                            logger.info(f"[RevocationAndLogger V1.0] Parsed nickname from <replacemsg>: {actual_name}")
                         else:
-                            logger.warning("[RevocationAndLogger V2.1] Failed to parse nickname from <replacemsg> CDATA.")
+                            logger.warning("[RevocationAndLogger V1.0] Failed to parse nickname from <replacemsg> CDATA.")
                     except Exception as parse_e:
-                        logger.error(f"[RevocationAndLogger V2.1] Error parsing <replacemsg>: {parse_e}")
+                        logger.error(f"[RevocationAndLogger V1.0] Error parsing <replacemsg>: {parse_e}")
 
                 if not actual_name or actual_name == "未知成员": actual_name = f"用户({revoker_id or '未知ID'})"
                 prefix = f"群「{from_name}」的成员「{actual_name}」"
@@ -419,16 +419,16 @@ class RevocationAndLogger(Plugin):
                 from_name = self.get_user_info(sender_id)
                 prefix = f"好友「{from_name}」"
 
-            logger.info(f"[RevocationAndLogger V2.1] Constructed prefix: {prefix}")
+            logger.info(f"[RevocationAndLogger V1.0] Constructed prefix: {prefix}")
 
             if original_msg.ctype == ContextType.TEXT:
-                logger.info(f"[RevocationAndLogger V2.1] Sending TEXT revoke notification to {receiver}...")
+                logger.info(f"[RevocationAndLogger V1.0] Sending TEXT revoke notification to {receiver}...")
                 client.post_text(app_id, receiver, f"{prefix} 撤回了一条消息:\n---\n{original_msg.content}", "")
-                logger.info(f"[RevocationAndLogger V2.1] TEXT notification sent.")
+                logger.info(f"[RevocationAndLogger V1.0] TEXT notification sent.")
             elif tmp_file_path and os.path.exists(tmp_file_path) and original_msg.ctype in [ContextType.IMAGE, ContextType.VIDEO, ContextType.FILE, ContextType.VOICE]:
                 type_str_map = { ContextType.IMAGE: "图片", ContextType.VIDEO: "视频", ContextType.FILE: "文件", ContextType.VOICE: "语音" }
                 type_str = type_str_map.get(original_msg.ctype, "媒体文件")
-                logger.info(f"[RevocationAndLogger V2.1] Sending {type_str} revoke notification to {receiver}...")
+                logger.info(f"[RevocationAndLogger V1.0] Sending {type_str} revoke notification to {receiver}...")
                 client.post_text(app_id, receiver, f"{prefix} 撤回了一个{type_str}👇", "")
 
                 callback_url = conf().get("gewechat_callback_url", "").rstrip('/')
@@ -437,29 +437,29 @@ class RevocationAndLogger(Plugin):
                         rel_path = os.path.relpath(tmp_file_path, os.getcwd()).replace(os.sep, '/')
                         if not rel_path.startswith('tmp/'): rel_path = 'tmp/' + os.path.basename(tmp_file_path)
                         file_url = f"{callback_url}?file={rel_path}"
-                        logger.info(f"[RevocationAndLogger V2.1] Sending file via URL: {file_url}")
+                        logger.info(f"[RevocationAndLogger V1.0] Sending file via URL: {file_url}")
                         if original_msg.ctype == ContextType.IMAGE: client.post_image(app_id, receiver, file_url)
                         elif original_msg.ctype == ContextType.VIDEO: client.post_file(app_id, receiver, file_url, os.path.basename(tmp_file_path))
                         elif original_msg.ctype == ContextType.VOICE: client.post_file(app_id, receiver, file_url, os.path.basename(tmp_file_path))
                         else: client.post_file(app_id, receiver, file_url, os.path.basename(tmp_file_path))
-                        logger.info(f"[RevocationAndLogger V2.1] File notification sent.")
+                        logger.info(f"[RevocationAndLogger V1.0] File notification sent.")
                     except Exception as send_e:
-                        logger.error(f"[RevocationAndLogger V2.1] Failed to send file via callback URL: {send_e}")
+                        logger.error(f"[RevocationAndLogger V1.0] Failed to send file via callback URL: {send_e}")
                         client.post_text(app_id, receiver, f"（无法发送被撤回的{type_str}文件，请检查回调配置或临时文件）", "")
                 else:
-                    logger.error("[RevocationAndLogger V2.1] gewechat_callback_url not configured, cannot send file content.")
+                    logger.error("[RevocationAndLogger V1.0] gewechat_callback_url not configured, cannot send file content.")
                     client.post_text(app_id, receiver, f"（无法发送被撤回的{type_str}文件，回调URL未配置）", "")
             elif original_msg.ctype not in [ContextType.TEXT]:
                 type_name = original_msg.ctype.name
-                logger.info(f"[RevocationAndLogger V2.1] Sending {type_name} type revoke notification to {receiver}...")
+                logger.info(f"[RevocationAndLogger V1.0] Sending {type_name} type revoke notification to {receiver}...")
                 client.post_text(app_id, receiver, f"{prefix} 撤回了一条 {type_name} 类型的消息。", "")
-                logger.info(f"[RevocationAndLogger V2.1] Type notification sent.")
-            else: logger.warning(f"[RevocationAndLogger V2.1] Unhandled original message type for revoke: {original_msg.ctype}, tmp_file_path: {tmp_file_path}")
+                logger.info(f"[RevocationAndLogger V1.0] Type notification sent.")
+            else: logger.warning(f"[RevocationAndLogger V1.0] Unhandled original message type for revoke: {original_msg.ctype}, tmp_file_path: {tmp_file_path}")
 
-            logger.info(f"[RevocationAndLogger V2.1] Revoke handling appears complete for ID {found_id}.")
+            logger.info(f"[RevocationAndLogger V1.0] Revoke handling appears complete for ID {found_id}.")
         except Exception as e:
-            logger.error(f"[RevocationAndLogger V2.1] Exception during revoke notification sending: {e}")
-            logger.error(f"[RevocationAndLogger V2.1] Traceback: {traceback.format_exc()}")
+            logger.error(f"[RevocationAndLogger V1.0] Exception during revoke notification sending: {e}")
+            logger.error(f"[RevocationAndLogger V1.0] Traceback: {traceback.format_exc()}")
 
     def handle_msg(self, msg: ChatMessage, is_group=False):
         try:

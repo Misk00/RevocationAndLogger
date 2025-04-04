@@ -1,7 +1,7 @@
 ## 防撤回和消息记录插件，仅支持项目 [dify-on-wechat](https://github.com/hanfangyuan4396/dify-on-wechat) 的gewechat协议类型
 
 ## 功能演示
-
+[https://raw.githubusercontent.com/Misk00/RevocationAndLogger/refs/h](https://raw.githubusercontent.com/Misk00/RevocationAndLogger/refs/heads/main/image/1.png)
 
 
 
